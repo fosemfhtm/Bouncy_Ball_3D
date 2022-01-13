@@ -5,31 +5,34 @@ using UnityEngine;
 public class camera : MonoBehaviour
 {
     public GameObject player;
-    public float rotateSpeed = 2.5f;
+    public float rotateSpeed = 2f;
     public float wheelSpeed = 10f;
-    public float distance = 10f;
+    public float distance = 5f;
     public float scroll_higher_bound = 30f;
     public float scroll_lower_bound = 1f;
-    public bool Third_View = false;
+    public bool Third_View = true;
 
     private Vector3 Camera_Height;
     private Vector3 Third_View_Side;
     
-    private float dx = 2;
-    private float dy = 25;
+    private float dx = 0;
+    private float dy = 0;
 
 
     void Start()
     {
-        Camera_Height = new Vector3(0, 2.5f, 0f);
+        Camera_Height = new Vector3(0, 5f, 0f);
         Third_View_Side = new Vector3(-1f, 0f, 0f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        dx += Input.GetAxis("Mouse X");
-        dy -= Input.GetAxis("Mouse Y");
+        if (Input.GetMouseButton(1))
+        {
+            dx += Input.GetAxis("Mouse X");
+            dy -= Input.GetAxis("Mouse Y");
+        }
         
         transform.rotation = Quaternion.Euler(dy * rotateSpeed, dx * rotateSpeed, 0);
 
@@ -41,7 +44,7 @@ public class camera : MonoBehaviour
 
         if (!Third_View)
         {
-            Camera_View += Camera_Height;
+            Camera_View += Camera_Height * 0.6f;
             Vector3 reverseDistance = new Vector3(0.0f, 0.0f, 0.5f);
             transform.position = Camera_View + transform.rotation * reverseDistance;
         }
