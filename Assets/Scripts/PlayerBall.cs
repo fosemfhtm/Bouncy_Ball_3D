@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerBall : MonoBehaviour
 {
+    public GameObject camera;
     public float jumpPower = 10;
     public float factor = 0.7f;
     public float max_velocity = 10f;
@@ -20,25 +21,32 @@ public class PlayerBall : MonoBehaviour
         }
     }
     
-    void FixedUpdate() { 
-        Debug.Log(rigid.velocity.z);
+    void FixedUpdate() {
+        Vector3 dir = camera.transform.rotation * Vector3.forward;
+        Debug.Log(camera.transform.rotation * Vector3.forward);
+        dir.y = 0f;
+        Vector3 dir_z = (dir).normalized;
+        Vector3 dir_x = -Vector3.Cross(dir_z, new Vector3(0, 1f, 0));
 
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
-        bool stop = false, keep_max = false, change_dir_x = false, change_dir_z = false;
-        float stop_x=rigid.velocity.x, stop_z=rigid.velocity.z;
-        float max_x=rigid.velocity.x, max_z=rigid.velocity.z;
+        Vector3 velocity_x = proj(rigid.velocity, dir_x);
+        Vector3 velocity_z = proj(rigid.velocity, dir_z);
 
-        if(Mathf.Abs(rigid.velocity.x) >= velocity_lowerbound && h*rigid.velocity.x<0f) {
+        bool stop = false, keep_max = false, change_dir_x = false, change_dir_z = false;
+        Vector3 stop_x = velocity_x, stop_z = velocity_z;
+        Vector3 max_x = velocity_x, max_z = velocity_z;
+
+        if(Vector3.Magnitude(velocity_x) >= velocity_lowerbound && h * vecConst(velocity_x, dir_x) < 0f) {
             change_dir_x = true;
         }
 
-        if(Mathf.Abs(rigid.velocity.z) >= velocity_lowerbound && v*rigid.velocity.z<0f) {
+        if(Vector3.Magnitude(velocity_z) >= velocity_lowerbound && v * vecConst(velocity_z, dir_z) < 0f) {
             change_dir_z = true;
         }
 
-        if(Mathf.Abs(rigid.velocity.x) <= max_velocity) {
+        if(Vector3.Magnitude(velocity_x) <= max_velocity) {
             float force_control;
 
             if(change_dir_x) {
@@ -48,16 +56,15 @@ public class PlayerBall : MonoBehaviour
                 force_control = h*factor;
             }
 
-            if(Mathf.Abs(rigid.velocity.x + force_control) > max_velocity) {
-                force_control = h*(max_velocity - Mathf.Abs(rigid.velocity.x));
+            if(Vector3.Magnitude(velocity_x + dir_x * force_control) > max_velocity) {
+                force_control = h*(max_velocity - Vector3.Magnitude(velocity_x));
             }
 
-            rigid.AddForce(new Vector3(force_control, 0, 0), ForceMode.Impulse);
-            // if(change_dir_x) rigid.AddForce(new Vector3(2.5f*h*factor, 0, 0), ForceMode.Impulse);
-            // else rigid.AddForce(new Vector3(h*factor, 0, 0), ForceMode.Impulse);
+            // rigid.AddForce(new Vector3(force_control, 0, 0), ForceMode.Impulse);
+            rigid.AddForce(dir_x * force_control, ForceMode.Impulse);
         }
         
-        if(Mathf.Abs(rigid.velocity.z) <= max_velocity) {
+        if(Vector3.Magnitude(velocity_z) <= max_velocity) {
             float force_control;
 
             if(change_dir_z) {
@@ -67,71 +74,70 @@ public class PlayerBall : MonoBehaviour
                 force_control = v*factor;
             }
 
-            if(Mathf.Abs(rigid.velocity.z + force_control) > max_velocity) {
-                force_control = v*(max_velocity - Mathf.Abs(rigid.velocity.z));
+            if(Vector3.Magnitude(velocity_z + dir_z * force_control) > max_velocity) {
+                force_control = v*(max_velocity - Vector3.Magnitude(velocity_z));
             }
 
-            rigid.AddForce(new Vector3(0, 0, force_control), ForceMode.Impulse);
-            // if(change_dir_z) rigid.AddForce(new Vector3(0, 0, 2.5f*v*factor), ForceMode.Impulse);
-            // else rigid.AddForce(new Vector3(0, 0, v*factor), ForceMode.Impulse);
+            // rigid.AddForce(new Vector3(0, 0, force_control), ForceMode.Impulse);
+            rigid.AddForce(dir_z * force_control, ForceMode.Impulse);
         }
 
         if(h==0) {
-            if(Mathf.Abs(rigid.velocity.x) >= velocity_lowerbound) {
-                if(rigid.velocity.x > 0f) {
-                    rigid.AddForce(new Vector3(-friction_force, 0, 0), ForceMode.Impulse);    
+            if(Vector3.Magnitude(velocity_x) >= velocity_lowerbound) {
+                if(vecConst(velocity_x, dir_x) > 0f) {
+                    // rigid.AddForce(new Vector3(-friction_force, 0, 0), ForceMode.Impulse);
+                    rigid.AddForce(-friction_force * dir_x, ForceMode.Impulse);
                 }
                 else {
-                    rigid.AddForce(new Vector3(friction_force, 0, 0), ForceMode.Impulse);
+                    // rigid.AddForce(new Vector3(friction_force, 0, 0), ForceMode.Impulse);
+                    rigid.AddForce(friction_force * dir_x, ForceMode.Impulse);
                 }
             }
             else {
                 stop = true;
-                stop_x = 0f;
+                stop_x = dir_x * 0f;
             }
         }
-        else if(Mathf.Abs(rigid.velocity.x) > max_velocity) {
+        else if(Vector3.Magnitude(velocity_x) > max_velocity) {
             keep_max = true;
-            if(rigid.velocity.x > 0f) {
-                max_x = max_velocity;
+            if(vecConst(velocity_x, dir_x) > 0f) {
+                max_x = dir_x * max_velocity;
             }
             else {
-                max_x = -max_velocity;
+                max_x = -dir_x * max_velocity;
             }
         }
 
         if(v==0) {
-            if(Mathf.Abs(rigid.velocity.z) >= velocity_lowerbound) {
-                if(rigid.velocity.z > 0f) {
-                    rigid.AddForce(new Vector3(0, 0, -friction_force), ForceMode.Impulse);
+            if(Vector3.Magnitude(velocity_z) >= velocity_lowerbound) {
+                if(vecConst(velocity_z, dir_z) > 0f) {
+                    // rigid.AddForce(new Vector3(0, 0, -friction_force), ForceMode.Impulse);
+                    rigid.AddForce(-friction_force * dir_z, ForceMode.Impulse);
                 }
                 else {
-                    rigid.AddForce(new Vector3(0, 0, friction_force), ForceMode.Impulse);
+                    // rigid.AddForce(new Vector3(0, 0, friction_force), ForceMode.Impulse);
+                    rigid.AddForce(friction_force * dir_z, ForceMode.Impulse);
                 }
             }
             else {
                 stop = true;
-                stop_z = 0f;
+                stop_z = dir_z * 0f;
             }
         }
-        else if(Mathf.Abs(rigid.velocity.z) > max_velocity){
+        else if(Vector3.Magnitude(velocity_z) > max_velocity){
             keep_max = true;
-            if(rigid.velocity.z > 0f) {
-                max_z = max_velocity;
+            if(vecConst(velocity_z, dir_z) > 0f) {
+                max_z = dir_z * max_velocity;
             }
             else {
-                max_z = -max_velocity;
+                max_z = -dir_z * max_velocity;
             }
         }
 
         if(stop) {
-            rigid.velocity = new Vector3(stop_x, rigid.velocity.y, stop_z);
+            rigid.velocity = new Vector3(0, rigid.velocity.y, 0) + stop_x + stop_z;
         }
-        if(keep_max) rigid.velocity = new Vector3(max_x, rigid.velocity.y, max_z);
-
-        // if(h==0 && v==0) rigid.velocity = new Vector3(rigid.velocity.x*0.9f, rigid.velocity.y, rigid.velocity.z*0.9f);
-        // if(h==0 && v!=0) rigid.velocity = new Vector3(rigid.velocity.x*0.9f, rigid.velocity.y, rigid.velocity.z);
-        // if(h!=0 && v==0) rigid.velocity = new Vector3(rigid.velocity.x, rigid.velocity.y, rigid.velocity.z*0.9f);
+        if(keep_max) rigid.velocity = new Vector3(0, rigid.velocity.y, 0) + max_x + max_z;
     }
 
     void OnCollisionEnter(Collision collision)
@@ -147,6 +153,23 @@ public class PlayerBall : MonoBehaviour
         GetComponent<Rigidbody>().AddForce((dir).normalized * 1200f);
     }
 
+    void OnTriggerEnter(Collider other) {
+        if(other.name == "star") {
+            other.gameObject.SetActive(false);
+        }
+
+        if(other.tag == "kasi") {
+            transform.position = new Vector3(0f, 10f, -5f);
+        }
+    }
+
+    Vector3 proj(Vector3 vec, Vector3 dir) { //dir_x is a unit vector
+        return Vector3.Dot(vec, dir) * dir;
+    }
+
+    float vecConst(Vector3 vec, Vector3 dir) { // vec is expected to be oriented to the same direction as dir
+        return Vector3.Dot(vec, dir);
+    }
 
 //     void FixedUpdate()
 //    {
