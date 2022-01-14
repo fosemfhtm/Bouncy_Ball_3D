@@ -128,7 +128,7 @@ public class PlayerBall : MonoBehaviour
         Vector3 max_x = velocity_x, max_z = velocity_z;
 
         // Debug.Log(v);
-        // Debug.Log(Vector3.Magnitude(velocity_z));
+        Debug.Log(Vector3.Magnitude(velocity_z));
 
         if(Vector3.Magnitude(velocity_x) >= velocity_lowerbound && h * vecConst(velocity_x, dir_x) < 0f) {
             change_dir_x = true;
