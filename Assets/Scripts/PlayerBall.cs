@@ -13,13 +13,15 @@ public class PlayerBall : MonoBehaviour
 
     public float DoubleClickTerm = 0.5f;
     public float DashForce = 5f;
-    private bool isOneClick_h = false, isOneClick_v = false;
-    private double PrevClickTime_h = 0, PrevClickTime_v = 0;
+    public float JumpForce = 20f;
+    private bool isOneClick_h = false, isOneClick_v = false, isOneJump = false;
+    private double PrevClickTime_h = 0, PrevClickTime_v = 0, PrevClickTime_j = 0;
     
     private bool dash = false;
-    private bool double_jump = false;
+    private bool jump = false;
     private bool dashing = false;
     private float prev_h = 0, prev_v = 0, prek_h = 0, prek_v = 0;
+    private bool prek_j = false;
     
 
     Rigidbody rigid;
@@ -44,20 +46,24 @@ public class PlayerBall : MonoBehaviour
     void FixedUpdate() {
         float hSmooth = Input.GetAxisRaw("Horizontal");
         float vSmooth = Input.GetAxisRaw("Vertical");
+        bool isJump = Input.GetKey(KeyCode.Space);
+        // Debug.Log(isJump);
         Vector3 dashDir = new Vector3(0, 0, 0);
         
         float h = 0, v = 0;
+        bool j = false;
 
         if(prek_h == 0 && hSmooth != 0) {
-            Debug.Log("Clicked!!!");
             h = hSmooth;
         }
 
         if(prek_v == 0 && vSmooth != 0) {
-            Debug.Log("Clicked!!!");
             v = vSmooth;
         }
-        
+
+        if(!prek_j && isJump) {
+            j = isJump;
+        }
         
         if(!dashing) {
 
@@ -86,12 +92,24 @@ public class PlayerBall : MonoBehaviour
             smoothMoving(hSmooth, vSmooth);
         }
         else if((prev_v != 0 && prev_v * v < 0) || (prev_h != 0 && prev_h * h < 0)) { // dash before rebound
+            rigid.AddForce(h*friction_force*dir_x + v*friction_force*dir_z, ForceMode.Impulse);
             prev_v = 0;
             prev_h = 0;
             dashing = false;
         }
 
-        
+        if(isOneJump && (Time.time - PrevClickTime_j) > DoubleClickTerm) {
+            isOneJump = false;
+        }
+
+        if(j) {
+            if(isDoubleJump() && jump) {
+                GetComponent<Renderer>().material.SetColor("_Color", rigid_color);
+                rigid.AddForce(new Vector3(0, 1f, 0) * JumpForce, ForceMode.Impulse);
+            }
+        }
+
+        prek_j = isJump;
         prek_h = hSmooth;
         prek_v = vSmooth;
     }
@@ -239,12 +257,19 @@ public class PlayerBall : MonoBehaviour
 
         if(other.tag == "kasi") {
             transform.position = new Vector3(0f, 10f, -5f);
+            rigid.velocity = new Vector3(0f, 0f, 0f);
         }
 
         if(other.tag == "dash_item") {
             // GetComponent<Renderer>().material.SetColor("_Color", Color.black);
             dash = true;
             GetComponent<Renderer>().material.SetColor("_Color", new Color(0, 0, 0));
+            other.gameObject.SetActive(false);
+        }
+
+        if(other.tag == "jump_item") {
+            jump = true;
+            GetComponent<Renderer>().material.SetColor("_Color", new Color(0.314f, 0.071f, 0.024f));
             other.gameObject.SetActive(false);
         }
     }
@@ -257,20 +282,35 @@ public class PlayerBall : MonoBehaviour
         return Vector3.Dot(vec, dir);
     }
 
+    bool isDoubleJump() {
+        bool ret = false;
+
+        if(!isOneJump) {
+            PrevClickTime_j = Time.time;
+            isOneJump = true;
+        }
+        else if(isOneJump && (Time.time - PrevClickTime_j) <= DoubleClickTerm) {
+            ret = true;
+            isOneJump = false;
+        }
+
+        return ret;
+    }
+
     Vector3 isDoubleClick(float h, float v) { // 좌클릭 더블
         Vector3 isDouble = new Vector3(0,0,0);
         // 둘 다 눌리면 v 우선 (앞, 뒤)
         
         if(v!=0) {
             if(!isOneClick_v) {
-                Debug.Log("One Click!!");
+                // Debug.Log("One Click!!");
                 PrevClickTime_v = Time.time;
                 isOneClick_v = true;
                 prev_v = v;
             }
             else if(isOneClick_v && (Time.time - PrevClickTime_v) <= DoubleClickTerm) {
                 if(v == prev_v) {
-                    Debug.Log("Double Click!!");
+                    // Debug.Log("Double Click!!");
                     isOneClick_h = false;
                     isOneClick_v = false;
                     prev_h = 0;
@@ -286,14 +326,14 @@ public class PlayerBall : MonoBehaviour
         
         if(h!=0) {
             if(!isOneClick_h) {
-                Debug.Log("One Click!!");
+                // Debug.Log("One Click!!");
                 PrevClickTime_h = Time.time;
                 isOneClick_h = true;
                 prev_h = h;
             }
             else if(isOneClick_h && (Time.time - PrevClickTime_h) <= DoubleClickTerm) {
                 if(h == prev_h) {
-                    Debug.Log("Double Click!!");
+                    // Debug.Log("Double Click!!");
                     isOneClick_h = false;
                     isOneClick_v = false;
                     prev_v = 0;

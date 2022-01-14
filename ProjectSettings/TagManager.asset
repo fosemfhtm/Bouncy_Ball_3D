@@ -7,6 +7,7 @@ TagManager:
   - kasi
   - item
   - dash_item
+  - jump_item
   layers:
   - Default
   - TransparentFX
