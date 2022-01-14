@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - kasi
+  - item
+  - dash_item
   layers:
   - Default
   - TransparentFX

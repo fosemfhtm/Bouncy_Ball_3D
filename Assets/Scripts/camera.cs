@@ -36,7 +36,7 @@ public class camera : MonoBehaviour
         
         transform.rotation = Quaternion.Euler(dy * rotateSpeed, dx * rotateSpeed, 0);
 
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(2)) {
             Third_View = !Third_View;
         }
 
