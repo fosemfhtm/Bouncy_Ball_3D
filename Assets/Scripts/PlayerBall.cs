@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerBall : MonoBehaviour
 {
     public GameObject camera;
+    public camera camera_script;
     public float jumpPower = 10;
     public float factor = 0.7f;
     public float max_velocity = 10f;
@@ -22,6 +23,9 @@ public class PlayerBall : MonoBehaviour
     private bool dashing = false;
     private float prev_h = 0, prev_v = 0, prek_h = 0, prek_v = 0;
     private bool prek_j = false;
+
+    public float floorY = 0f;
+    public float JumpHeight = 5f;
     
 
     Rigidbody rigid;
@@ -37,13 +41,29 @@ public class PlayerBall : MonoBehaviour
         dir.y = 0f;
         dir_z = (dir).normalized;
         dir_x = -Vector3.Cross(dir_z, new Vector3(0, 1f, 0));
+
+        camera_script = (camera) camera.GetComponent(typeof(camera));
     }
 
     void Update() {
-
     }
     
-    void FixedUpdate() {
+    void FixedUpdate() {        
+        Ray ray = new Ray();
+        ray.origin = transform.position;
+        ray.direction = -Vector3.up;
+
+        RaycastHit HitOut;
+        Physics.Raycast(ray, out HitOut);
+        //Debug.Log("*****");
+        Debug.Log(HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f);
+        if(Mathf.Abs(ray.origin.y - (HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f)) > JumpHeight) {
+            floorY = ray.origin.y - JumpHeight;
+        }
+        else {
+            floorY = (HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f);
+        }
+
         float hSmooth = Input.GetAxisRaw("Horizontal");
         float vSmooth = Input.GetAxisRaw("Vertical");
         bool isJump = Input.GetKey(KeyCode.Space);
@@ -128,7 +148,7 @@ public class PlayerBall : MonoBehaviour
         Vector3 max_x = velocity_x, max_z = velocity_z;
 
         // Debug.Log(v);
-        Debug.Log(Vector3.Magnitude(velocity_z));
+        // Debug.Log(Vector3.Magnitude(velocity_z));
 
         if(Vector3.Magnitude(velocity_x) >= velocity_lowerbound && h * vecConst(velocity_x, dir_x) < 0f) {
             change_dir_x = true;
@@ -238,6 +258,14 @@ public class PlayerBall : MonoBehaviour
         prev_h = 0;
         dashing = false;
         ExcecuteReBounding(collision);
+        Debug.Log(collision.gameObject.GetComponent<Collider>().bounds.size); //부딪히는 "바닥"은 모두 위쪽 축이 y이며 상하/좌우 대칭인 블록이라고 가정.
+        Debug.Log(collision.gameObject);
+
+        if(collision.gameObject.tag == "fragile_block") {
+            collision.gameObject.SetActive(false);
+        }
+
+        camera_script.BallCollision(collision.contacts[0].normal, collision.gameObject.transform.position.y + collision.gameObject.GetComponent<Collider>().bounds.size.y / 2f);
     }
     
     
@@ -251,23 +279,26 @@ public class PlayerBall : MonoBehaviour
     }
 
     void OnTriggerEnter(Collider other) {
-        if(other.name == "star") {
+        if(other.tag == "star") {
             other.gameObject.SetActive(false);
         }
 
         if(other.tag == "kasi") {
+            init_item_var();
             transform.position = new Vector3(0f, 10f, -5f);
             rigid.velocity = new Vector3(0f, 0f, 0f);
         }
 
         if(other.tag == "dash_item") {
             // GetComponent<Renderer>().material.SetColor("_Color", Color.black);
+            init_jump_var();
             dash = true;
             GetComponent<Renderer>().material.SetColor("_Color", new Color(0, 0, 0));
             other.gameObject.SetActive(false);
         }
 
         if(other.tag == "jump_item") {
+            init_dash_var();
             jump = true;
             GetComponent<Renderer>().material.SetColor("_Color", new Color(0.314f, 0.071f, 0.024f));
             other.gameObject.SetActive(false);
@@ -348,6 +379,31 @@ public class PlayerBall : MonoBehaviour
         }
 
         return isDouble;
+    }
+
+    void init_item_var() {
+        init_dash_var();
+        init_jump_var();
+    }
+
+    void init_dash_var() {
+        isOneClick_h = false;
+        isOneClick_v = false;
+        PrevClickTime_h = 0;
+        PrevClickTime_v = 0;
+        dash = false;
+        dashing = false;
+        prev_h = 0;
+        prev_v = 0;
+        prek_h = 0;
+        prek_v = 0;
+    }
+
+    void init_jump_var() {
+        isOneJump = false;
+        PrevClickTime_j = 0;
+        jump = false;
+        prek_j = false;
     }
 
 }

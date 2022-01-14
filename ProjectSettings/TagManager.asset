@@ -8,6 +8,8 @@ TagManager:
   - item
   - dash_item
   - jump_item
+  - star
+  - fragile_block
   layers:
   - Default
   - TransparentFX
