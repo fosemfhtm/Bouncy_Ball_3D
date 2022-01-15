@@ -10,6 +10,7 @@ TagManager:
   - jump_item
   - star
   - fragile_block
+  - blocking
   layers:
   - Default
   - TransparentFX
