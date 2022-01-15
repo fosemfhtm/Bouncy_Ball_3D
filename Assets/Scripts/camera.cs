@@ -8,6 +8,7 @@ public class camera : MonoBehaviour
     public PlayerBall player_script;
     public GameObject controlY;
     public cameraY controlY_script;
+    
     public float rotateSpeed = 2f;
     public float wheelSpeed = 10f;
     public float distance = 5f;
@@ -20,7 +21,7 @@ public class camera : MonoBehaviour
     
     private float dx = 0;
     private float dy = 0;
-    private float damp_velocity = 15f, smoothTime=0.25f, newY;
+    private float damp_velocity = 15f, smoothTime=0.5f, newY;
 
 
     void Start()
@@ -70,11 +71,4 @@ public class camera : MonoBehaviour
             transform.position = Camera_View - transform.rotation * reverseDistance;
         }
     }
-
-    // public void BallCollision(Vector3 normal_vec, float floor_y) {
-    //     if(Mathf.Abs(normal_vec.x) < nv_epsilon && Mathf.Abs(normal_vec.z) < nv_epsilon) {
-    //         ball_following = false;
-    //         this.floor_y = floor_y;
-    //     }
-    // }
 }

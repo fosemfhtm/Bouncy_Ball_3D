@@ -155,6 +155,7 @@ MonoBehaviour:
   player: {fileID: 1305869164}
   player_script: {fileID: 1305869170}
   ball_following: 0
+  height: 10
 --- !u!4 &16509304
 Transform:
   m_ObjectHideFlags: 0
@@ -7240,7 +7241,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 507753738}
   camera_script: {fileID: 0}
-  jumpPower: 10
   factor: 0.7
   max_velocity: 10
   friction_force: 0.5
@@ -7249,7 +7249,6 @@ MonoBehaviour:
   DashForce: 30
   JumpForce: 30
   floorY: 0
-  JumpHeight: 8
 --- !u!1 &1306626770
 GameObject:
   m_ObjectHideFlags: 0

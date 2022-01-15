@@ -6,7 +6,6 @@ public class PlayerBall : MonoBehaviour
 {
     public GameObject camera;
     public camera camera_script;
-    public float jumpPower = 10;
     public float factor = 0.7f;
     public float max_velocity = 10f;
     public float friction_force = 0.5f;
@@ -25,7 +24,6 @@ public class PlayerBall : MonoBehaviour
     private bool prek_j = false;
 
     public float floorY = 0f;
-    public float JumpHeight = 8f;
     
 
     Rigidbody rigid;
@@ -141,8 +139,8 @@ public class PlayerBall : MonoBehaviour
         Vector3 stop_x = velocity_x, stop_z = velocity_z;
         Vector3 max_x = velocity_x, max_z = velocity_z;
 
-        // Debug.Log(v);
-        // Debug.Log(Vector3.Magnitude(velocity_z));
+        Debug.Log(Vector3.Magnitude(velocity_x));
+        Debug.Log(Vector3.Magnitude(velocity_z));
 
         if(Vector3.Magnitude(velocity_x) >= velocity_lowerbound && h * vecConst(velocity_x, dir_x) < 0f) {
             change_dir_x = true;
@@ -166,7 +164,6 @@ public class PlayerBall : MonoBehaviour
                 }
             }
 
-            // rigid.AddForce(new Vector3(force_control, 0, 0), ForceMode.Impulse);
             rigid.AddForce(dir_x * force_control, ForceMode.Impulse);
         }
         
@@ -184,18 +181,15 @@ public class PlayerBall : MonoBehaviour
                 }
             }
 
-            // rigid.AddForce(new Vector3(0, 0, force_control), ForceMode.Impulse);
             rigid.AddForce(dir_z * force_control, ForceMode.Impulse);
         }
 
         if(h==0) {
             if(Vector3.Magnitude(velocity_x) >= velocity_lowerbound) {
                 if(vecConst(velocity_x, dir_x) > 0f) {
-                    // rigid.AddForce(new Vector3(-friction_force, 0, 0), ForceMode.Impulse);
                     rigid.AddForce(-friction_force * dir_x, ForceMode.Impulse);
                 }
                 else {
-                    // rigid.AddForce(new Vector3(friction_force, 0, 0), ForceMode.Impulse);
                     rigid.AddForce(friction_force * dir_x, ForceMode.Impulse);
                 }
             }
@@ -204,24 +198,13 @@ public class PlayerBall : MonoBehaviour
                 stop_x = dir_x * 0f;
             }
         }
-        // else if(Vector3.Magnitude(velocity_x) > max_velocity) { // 키씹의 원인: 한 번 반대 키 눌려도, 한 번에 제대로 감속 안 되어 여기로 들어오면, 다시 10으로 max 속도 설정.
-        //     keep_max = true;
-        //     if(vecConst(velocity_x, dir_x) > 0f) {
-        //         max_x = dir_x * max_velocity;
-        //     }
-        //     else {
-        //         max_x = -dir_x * max_velocity;
-        //     }
-        // }
 
         if(v==0) {
             if(Vector3.Magnitude(velocity_z) >= velocity_lowerbound) {
                 if(vecConst(velocity_z, dir_z) > 0f) {
-                    // rigid.AddForce(new Vector3(0, 0, -friction_force), ForceMode.Impulse);
                     rigid.AddForce(-friction_force * dir_z, ForceMode.Impulse);
                 }
                 else {
-                    // rigid.AddForce(new Vector3(0, 0, friction_force), ForceMode.Impulse);
                     rigid.AddForce(friction_force * dir_z, ForceMode.Impulse);
                 }
             }
@@ -230,20 +213,10 @@ public class PlayerBall : MonoBehaviour
                 stop_z = dir_z * 0f;
             }
         }
-        // else if(Vector3.Magnitude(velocity_z) > max_velocity){
-        //     keep_max = true;
-        //     if(vecConst(velocity_z, dir_z) > 0f) {
-        //         max_z = dir_z * max_velocity;
-        //     }
-        //     else {
-        //         max_z = -dir_z * max_velocity;
-        //     }
-        // }
 
         if(stop) {
             rigid.velocity = new Vector3(0, rigid.velocity.y, 0) + stop_x + stop_z;
         }
-        // if(keep_max) rigid.velocity = new Vector3(0, rigid.velocity.y, 0) + max_x + max_z;
     }
 
     void OnCollisionEnter(Collision collision)
@@ -258,8 +231,6 @@ public class PlayerBall : MonoBehaviour
         if(collision.gameObject.tag == "fragile_block") {
             collision.gameObject.SetActive(false);
         }
-
-        // camera_script.BallCollision(collision.contacts[0].normal, collision.gameObject.transform.position.y + collision.gameObject.GetComponent<Collider>().bounds.size.y / 2f);
     }
     
     
@@ -279,12 +250,11 @@ public class PlayerBall : MonoBehaviour
 
         if(other.tag == "kasi") {
             init_item_var();
-            transform.position = new Vector3(0f, 10f, -5f);
+            transform.position = new Vector3(0f, 30f, 0f);
             rigid.velocity = new Vector3(0f, 0f, 0f);
         }
 
         if(other.tag == "dash_item") {
-            // GetComponent<Renderer>().material.SetColor("_Color", Color.black);
             init_jump_var();
             dash = true;
             GetComponent<Renderer>().material.SetColor("_Color", new Color(0, 0, 0));
