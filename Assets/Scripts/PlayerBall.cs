@@ -6,6 +6,10 @@ public class PlayerBall : MonoBehaviour
 {
     public GameObject camera;
     public camera camera_script;
+
+    public GameObject dynamicObject;
+    public DynamicObjParent dynamicObjParent;
+
     public float factor = 0.7f;
     public float max_velocity = 10f;
     public float friction_force = 0.5f;
@@ -24,6 +28,7 @@ public class PlayerBall : MonoBehaviour
     private bool prek_j = false;
 
     public float floorY = 0f;
+    public Vector3 respawn_pos;
     
 
     Rigidbody rigid;
@@ -41,9 +46,16 @@ public class PlayerBall : MonoBehaviour
         dir_x = -Vector3.Cross(dir_z, new Vector3(0, 1f, 0));
 
         camera_script = (camera) camera.GetComponent(typeof(camera));
+        dynamicObjParent = (DynamicObjParent) dynamicObject.GetComponent(typeof(DynamicObjParent));
+        
+        respawn_pos = new Vector3(0f, 30f, 0f);
+        transform.position = respawn_pos;
     }
 
     void Update() {
+        if(transform.position.y < -10f) {
+            respawn();
+        }
     }
     
     void FixedUpdate() {        
@@ -250,8 +262,7 @@ public class PlayerBall : MonoBehaviour
 
         if(other.tag == "kasi") {
             init_item_var();
-            transform.position = new Vector3(0f, 30f, 0f);
-            rigid.velocity = new Vector3(0f, 0f, 0f);
+            respawn();
         }
 
         if(other.tag == "dash_item") {
@@ -368,6 +379,12 @@ public class PlayerBall : MonoBehaviour
         PrevClickTime_j = 0;
         jump = false;
         prek_j = false;
+    }
+
+    void respawn() {
+        transform.position = respawn_pos;
+        rigid.velocity = new Vector3(0f, 0f, 0f);
+        dynamicObjParent.ActivateAllChildren();
     }
 
 }

@@ -17,4 +17,10 @@ public class moveBlock : MonoBehaviour
     {
         transform.Translate(new Vector3(0, 0, speed * dir));
     }
+    
+    void OnTriggerEnter(Collider other) {
+        if(other.tag == "blocking") {
+            dir *= -1;
+        }
+    }
 }
