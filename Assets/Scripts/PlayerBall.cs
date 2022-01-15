@@ -25,7 +25,7 @@ public class PlayerBall : MonoBehaviour
     private bool prek_j = false;
 
     public float floorY = 0f;
-    public float JumpHeight = 5f;
+    public float JumpHeight = 8f;
     
 
     Rigidbody rigid;
@@ -56,8 +56,12 @@ public class PlayerBall : MonoBehaviour
         RaycastHit HitOut;
         Physics.Raycast(ray, out HitOut);
         //Debug.Log("*****");
-        Debug.Log(HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f);
+        // Debug.Log(HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f);
         if(Mathf.Abs(ray.origin.y - (HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f)) > JumpHeight) {
+            Debug.Log("*****");
+            Debug.Log(ray.origin.y);
+            Debug.Log(HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f);
+
             floorY = ray.origin.y - JumpHeight;
         }
         else {
@@ -258,14 +262,14 @@ public class PlayerBall : MonoBehaviour
         prev_h = 0;
         dashing = false;
         ExcecuteReBounding(collision);
-        Debug.Log(collision.gameObject.GetComponent<Collider>().bounds.size); //부딪히는 "바닥"은 모두 위쪽 축이 y이며 상하/좌우 대칭인 블록이라고 가정.
-        Debug.Log(collision.gameObject);
+        //Debug.Log(collision.gameObject.GetComponent<Collider>().bounds.size); //부딪히는 "바닥"은 모두 위쪽 축이 y이며 상하/좌우 대칭인 블록이라고 가정.
+        //Debug.Log(collision.gameObject);
 
         if(collision.gameObject.tag == "fragile_block") {
             collision.gameObject.SetActive(false);
         }
 
-        camera_script.BallCollision(collision.contacts[0].normal, collision.gameObject.transform.position.y + collision.gameObject.GetComponent<Collider>().bounds.size.y / 2f);
+        // camera_script.BallCollision(collision.contacts[0].normal, collision.gameObject.transform.position.y + collision.gameObject.GetComponent<Collider>().bounds.size.y / 2f);
     }
     
     

@@ -6,6 +6,8 @@ public class camera : MonoBehaviour
 {
     public GameObject player;
     public PlayerBall player_script;
+    public GameObject controlY;
+    public cameraY controlY_script;
     public float rotateSpeed = 2f;
     public float wheelSpeed = 10f;
     public float distance = 5f;
@@ -18,10 +20,7 @@ public class camera : MonoBehaviour
     
     private float dx = 0;
     private float dy = 0;
-    private float nv_epsilon = 0.01f;
-
-    private bool ball_following = false;
-    private float floor_y = 0f, alpha = 0f;
+    private float damp_velocity = 15f, smoothTime=0.25f, newY;
 
 
     void Start()
@@ -29,19 +28,19 @@ public class camera : MonoBehaviour
         Camera_Height = new Vector3(0, 5f, 0f);
         Third_View_Side = new Vector3(-1f, 0f, 0f);
         player_script = (PlayerBall) player.GetComponent(typeof(PlayerBall));
+        controlY_script = (cameraY) controlY.GetComponent(typeof(cameraY));
     }
 
     // Update is called once per frame
     void Update()
     {
         Vector3 pure_CamView = transform.position + transform.rotation * (new Vector3(0.0f, 0.0f, distance));
-       
+        if(controlY_script.ball_following) newY = Mathf.SmoothDamp(newY, controlY.transform.position.y, ref damp_velocity, smoothTime/2f);
+        else newY = Mathf.SmoothDamp(newY, controlY.transform.position.y, ref damp_velocity, smoothTime);
+        // newY = controlY.transform.position.y;
         // if(ball_following) Debug.Log("-----------");
         // Debug.Log(pure_CamView);
         // Debug.Log(player.transform.position.y);
-        // if(player.transform.position.y > pure_CamView.y || player.transform.position.y < floor_y) {
-        //     ball_following = true;
-        // }
 
         if (Input.GetMouseButton(1))
         {
@@ -69,24 +68,17 @@ public class camera : MonoBehaviour
             if (distance > scroll_higher_bound) distance = scroll_higher_bound ;
 
             Camera_View += transform.rotation * Third_View_Side;
-            
-            // if(ball_following) {
-            //     Camera_View.y = player.transform.position.y + 10f;
-            // }
-            // else {
-            //     Camera_View.y = floor_y + 10f;
-            // }
-            Camera_View.y = player_script.floorY + 10f;
+            Camera_View.y = newY;
 
             Vector3 reverseDistance = new Vector3(0.0f, 0.0f, distance);
             transform.position = Camera_View - transform.rotation * reverseDistance;
         }
     }
 
-    public void BallCollision(Vector3 normal_vec, float floor_y) {
-        if(Mathf.Abs(normal_vec.x) < nv_epsilon && Mathf.Abs(normal_vec.z) < nv_epsilon) {
-            ball_following = false;
-            this.floor_y = floor_y;
-        }
-    }
+    // public void BallCollision(Vector3 normal_vec, float floor_y) {
+    //     if(Mathf.Abs(normal_vec.x) < nv_epsilon && Mathf.Abs(normal_vec.z) < nv_epsilon) {
+    //         ball_following = false;
+    //         this.floor_y = floor_y;
+    //     }
+    // }
 }
