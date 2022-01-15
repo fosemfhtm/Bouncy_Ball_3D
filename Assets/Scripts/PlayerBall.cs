@@ -55,23 +55,12 @@ public class PlayerBall : MonoBehaviour
 
         RaycastHit HitOut;
         Physics.Raycast(ray, out HitOut);
-        //Debug.Log("*****");
-        // Debug.Log(HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f);
-        if(Mathf.Abs(ray.origin.y - (HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f)) > JumpHeight) {
-            Debug.Log("*****");
-            Debug.Log(ray.origin.y);
-            Debug.Log(HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f);
-
-            floorY = ray.origin.y - JumpHeight;
-        }
-        else {
-            floorY = (HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f);
-        }
+        floorY = HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f; // 충돌 블록 상하, 좌우 대칭 가정.
 
         float hSmooth = Input.GetAxisRaw("Horizontal");
         float vSmooth = Input.GetAxisRaw("Vertical");
         bool isJump = Input.GetKey(KeyCode.Space);
-        // Debug.Log(isJump);
+        
         Vector3 dashDir = new Vector3(0, 0, 0);
         
         float h = 0, v = 0;
@@ -129,6 +118,7 @@ public class PlayerBall : MonoBehaviour
         if(j) {
             if(isDoubleJump() && jump) {
                 GetComponent<Renderer>().material.SetColor("_Color", rigid_color);
+                rigid.velocity = new Vector3(rigid.velocity.x, 0, rigid.velocity.z);
                 rigid.AddForce(new Vector3(0, 1f, 0) * JumpForce, ForceMode.Impulse);
             }
         }

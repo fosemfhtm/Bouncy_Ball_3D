@@ -34,13 +34,9 @@ public class camera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 pure_CamView = transform.position + transform.rotation * (new Vector3(0.0f, 0.0f, distance));
+        // Vector3 pure_CamView = transform.position + transform.rotation * (new Vector3(0.0f, 0.0f, distance));
         if(controlY_script.ball_following) newY = Mathf.SmoothDamp(newY, controlY.transform.position.y, ref damp_velocity, smoothTime/2f);
         else newY = Mathf.SmoothDamp(newY, controlY.transform.position.y, ref damp_velocity, smoothTime);
-        // newY = controlY.transform.position.y;
-        // if(ball_following) Debug.Log("-----------");
-        // Debug.Log(pure_CamView);
-        // Debug.Log(player.transform.position.y);
 
         if (Input.GetMouseButton(1))
         {

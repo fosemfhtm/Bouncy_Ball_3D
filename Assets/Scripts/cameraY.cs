@@ -8,6 +8,7 @@ public class cameraY : MonoBehaviour
     public PlayerBall player_script;
     private float controlY;
     public bool ball_following = false;
+    public float height = 10f;
 
     void Start()
     {
@@ -17,7 +18,7 @@ public class cameraY : MonoBehaviour
 
     void Update()
     {
-        if(player.transform.position.y > player_script.floorY + 10f) {
+        if(player.transform.position.y > player_script.floorY + height) {
             ball_following = true;
         }
         else {
@@ -28,7 +29,7 @@ public class cameraY : MonoBehaviour
             controlY = player.transform.position.y;
         }
         else {
-            controlY = player_script.floorY + 10f;
+            controlY = player_script.floorY + height;
         }
 
         transform.position = new Vector3(0, controlY, 0);
