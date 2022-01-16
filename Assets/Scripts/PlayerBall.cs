@@ -16,7 +16,7 @@ public class PlayerBall : MonoBehaviour
     public float velocity_lowerbound = 0.36f;
 
     public float DoubleClickTerm = 0.35f;
-    public float DashForce = 30f;
+    public float DashForce = 40f;
     public float JumpForce = 40f;
     private bool isOneClick_h = false, isOneClick_v = false, isOneJump = false;
     private double PrevClickTime_h = 0, PrevClickTime_v = 0, PrevClickTime_j = 0;
