@@ -35,8 +35,9 @@ public class PlayerBall : MonoBehaviour
     Color rigid_color;
 
     private Vector3 dir_x, dir_z;
-    public float jump_velocity = 40f;
+    private float jump_velocity = 37f;
     private float bound_error = 0.5f;
+    private float pushing_factor = 1.8f;
     
     void Awake() {
         rigid = GetComponent<Rigidbody>();
@@ -173,7 +174,7 @@ public class PlayerBall : MonoBehaviour
         Vector3 stop_x = velocity_x, stop_z = velocity_z;
         Vector3 max_x = velocity_x, max_z = velocity_z;
 
-        // Debug.Log(Vector3.Magnitude(velocity_x));
+        Debug.Log(velocity_x);
         // Debug.Log(Vector3.Magnitude(velocity_z));
 
         if(Vector3.Magnitude(velocity_x) >= velocity_lowerbound && h * vecConst(velocity_x, dir_x) < 0f) {
