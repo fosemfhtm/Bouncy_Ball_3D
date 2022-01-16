@@ -95,33 +95,36 @@ public class PlayerBall : MonoBehaviour
         if(!prek_j && isJump) {
             j = isJump;
         }
+
+        if(isOneClick_h && (Time.time - PrevClickTime_h) > DoubleClickTerm) {
+            // Debug.Log("One Click!!");
+            prev_h = 0;
+            isOneClick_h = false;
+        }
+
+        if(isOneClick_v && (Time.time - PrevClickTime_v) > DoubleClickTerm) {
+            // Debug.Log("One Click!!");
+            prev_v = 0;
+            isOneClick_v = false;
+        }
         
-        if(!dashing && !shooting) {
-
-            if(isOneClick_h && (Time.time - PrevClickTime_h) > DoubleClickTerm) {
-                // Debug.Log("One Click!!");
-                prev_h = 0;
-                isOneClick_h = false;
-            }
-
-            if(isOneClick_v && (Time.time - PrevClickTime_v) > DoubleClickTerm) {
-                // Debug.Log("One Click!!");
-                prev_v = 0;
-                isOneClick_v = false;
-            }
-
+        if(!dashing) {
             if (h!=0 || v!=0) {
                 dashDir = isDoubleClick(h, v);
 
                 if(!(dashDir.x == 0 && dashDir.y == 0 && dashDir.z == 0) && dash) {
                     GetComponent<Renderer>().material.SetColor("_Color", rigid_color);
+                    rigid.velocity = new Vector3(rigid.velocity.x, 0, rigid.velocity.z);
                     rigid.AddForce(dashDir * DashForce, ForceMode.Impulse);
                     dash = false;
                     dashing = true;
+                    rigid.useGravity = true;
                 }
             }
 
-            smoothMoving(hSmooth, vSmooth);
+            if(!shooting) {
+                smoothMoving(hSmooth, vSmooth);
+            }
         }
         else if((prev_v != 0 && prev_v * v < 0) || (prev_h != 0 && prev_h * h < 0)) { // dash before rebound
             rigid.AddForce(h*friction_force*dir_x + v*friction_force*dir_z, ForceMode.Impulse);
@@ -144,6 +147,9 @@ public class PlayerBall : MonoBehaviour
                 GetComponent<Renderer>().material.SetColor("_Color", rigid_color);
                 rigid.velocity = new Vector3(rigid.velocity.x, 0, rigid.velocity.z);
                 rigid.AddForce(new Vector3(0, 1f, 0) * JumpForce, ForceMode.Impulse);
+                
+                rigid.useGravity = true;
+                shooting = false;
             }
         }
 
