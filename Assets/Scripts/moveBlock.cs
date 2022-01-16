@@ -4,18 +4,22 @@ using UnityEngine;
 
 public class moveBlock : MonoBehaviour
 {
-    public float dir = 1f;
-    public float speed = 0.2f;
+    public double dir = 1f;
+    public double speed;
+    private double prevTime;
     // Start is called before the first frame update
     void Start()
     {
-        dir = 1f;
+        dir = 1;
+        speed = 8;
+        prevTime = Time.time;
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(new Vector3(0, 0, speed * dir));
+        transform.Translate(new Vector3(0, 0, (float)(speed * dir * (Time.time - prevTime))));
+        prevTime = Time.time;
     }
     
     void OnTriggerEnter(Collider other) {

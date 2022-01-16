@@ -4130,7 +4130,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &732646378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6107,15 +6107,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d0bbf3aaa0d37048898b2d0f3c1bbb1, type: 3}
       propertyPath: m_LocalScale.x
-      value: 30
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d0bbf3aaa0d37048898b2d0f3c1bbb1, type: 3}
       propertyPath: m_LocalScale.y
-      value: 75.000046
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d0bbf3aaa0d37048898b2d0f3c1bbb1, type: 3}
       propertyPath: m_LocalScale.z
-      value: 30
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d0bbf3aaa0d37048898b2d0f3c1bbb1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6123,7 +6123,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d0bbf3aaa0d37048898b2d0f3c1bbb1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 39.799232
+      value: 38.79923
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d0bbf3aaa0d37048898b2d0f3c1bbb1, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7944,7 +7944,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh163872
+  m_Name: pb_Mesh261968
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
