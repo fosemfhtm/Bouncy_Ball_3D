@@ -11,13 +11,13 @@ public class PlayerBall : MonoBehaviour
     public DynamicObjParent dynamicObjParent;
 
     public float factor = 0.7f;
-    public float max_velocity = 10f;
-    public float friction_force = 0.5f;
-    public float velocity_lowerbound = 0.26f;
+    public float max_velocity = 17f;
+    public float friction_force = 0.7f;
+    public float velocity_lowerbound = 0.36f;
 
-    public float DoubleClickTerm = 0.5f;
-    public float DashForce = 5f;
-    public float JumpForce = 20f;
+    public float DoubleClickTerm = 0.35f;
+    public float DashForce = 30f;
+    public float JumpForce = 40f;
     private bool isOneClick_h = false, isOneClick_v = false, isOneJump = false;
     private double PrevClickTime_h = 0, PrevClickTime_v = 0, PrevClickTime_j = 0;
     
@@ -174,7 +174,7 @@ public class PlayerBall : MonoBehaviour
         Vector3 stop_x = velocity_x, stop_z = velocity_z;
         Vector3 max_x = velocity_x, max_z = velocity_z;
 
-        Debug.Log(velocity_x);
+        Debug.Log(Vector3.Magnitude(velocity_x));
         // Debug.Log(Vector3.Magnitude(velocity_z));
 
         if(Vector3.Magnitude(velocity_x) >= velocity_lowerbound && h * vecConst(velocity_x, dir_x) < 0f) {
@@ -189,10 +189,10 @@ public class PlayerBall : MonoBehaviour
             float force_control;
 
             if(change_dir_x) { // reverse direction
-                force_control = 2.5f*h*factor;
+                force_control = pushing_factor * 2.5f*h*factor;
             }
             else { // same direction
-                force_control = h*factor;
+                force_control = pushing_factor * h*factor;
 
                 if(Vector3.Magnitude(velocity_x + dir_x * force_control) >= max_velocity) {
                     force_control = h*(max_velocity - Vector3.Magnitude(velocity_x)); // 어차피 h==0이면 이 구문에서 힘이 들어오지 않음.
@@ -206,10 +206,10 @@ public class PlayerBall : MonoBehaviour
             float force_control;
 
             if(change_dir_z) { // reverse direction
-                force_control = 2.5f*v*factor;
+                force_control = pushing_factor * 2.5f*v*factor;
             }
             else { // same direction
-                force_control = v*factor;
+                force_control = pushing_factor * v*factor;
 
                 if(Vector3.Magnitude(velocity_z + dir_z * force_control) >= max_velocity) {
                     force_control = v*(max_velocity - Vector3.Magnitude(velocity_z)); // 어차피 v==0이면 이 구문에서 힘이 들어오지 않음.
