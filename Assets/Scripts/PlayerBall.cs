@@ -23,8 +23,7 @@ public class PlayerBall : MonoBehaviour
     
     private bool dash = false;
     private bool jump = false;
-    private bool dashing = false;
-    private bool shooting = false;
+    private bool dashing = false, shooting = false; // 두 값이 모두 true일 수 없도록 구현.
     private float prev_h = 0, prev_v = 0, prek_h = 0, prek_v = 0;
     private bool prek_j = false;
 
@@ -117,7 +116,14 @@ public class PlayerBall : MonoBehaviour
                     rigid.velocity = new Vector3(rigid.velocity.x, 0, rigid.velocity.z);
                     rigid.AddForce(dashDir * DashForce, ForceMode.Impulse);
                     dash = false;
+                    rigid.useGravity = true;
+
                     dashing = true;
+                    shooting = false;
+                }
+
+                if (shooting) {
+                    shooting = false;
                     rigid.useGravity = true;
                 }
             }
@@ -131,10 +137,6 @@ public class PlayerBall : MonoBehaviour
             prev_v = 0;
             prev_h = 0;
             dashing = false;
-        }
-        else if (h!=0 || v!=0) {
-            shooting = false;
-            rigid.useGravity = true;
         }
 
         if(isOneJump && (Time.time - PrevClickTime_j) > DoubleClickTerm) {
@@ -336,6 +338,7 @@ public class PlayerBall : MonoBehaviour
 
     void ExecuteShooting(Collider other) {
         shooting = true;
+        dashing = false;
         gameObject.transform.position = other.transform.position;
 
         rigid.velocity = Vector3.zero;
@@ -436,6 +439,7 @@ public class PlayerBall : MonoBehaviour
     void init_item_var() {
         init_dash_var();
         init_jump_var();
+        init_canon_var();
     }
 
     void init_dash_var() {
@@ -456,6 +460,10 @@ public class PlayerBall : MonoBehaviour
         PrevClickTime_j = 0;
         jump = false;
         prek_j = false;
+    }
+
+    void init_canon_var() {
+        shooting = false;
     }
 
     void respawn() {
