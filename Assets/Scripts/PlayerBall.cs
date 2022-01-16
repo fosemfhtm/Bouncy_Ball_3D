@@ -24,6 +24,7 @@ public class PlayerBall : MonoBehaviour
     private bool dash = false;
     private bool jump = false;
     private bool dashing = false;
+    private bool shooting = false;
     private float prev_h = 0, prev_v = 0, prek_h = 0, prek_v = 0;
     private bool prek_j = false;
 
@@ -36,7 +37,7 @@ public class PlayerBall : MonoBehaviour
 
     private Vector3 dir_x, dir_z;
     public float jump_velocity = 40f;
-    public float bound_error = 0.05f;
+    private float bound_error = 0.5f;
     
     void Awake() {
         rigid = GetComponent<Rigidbody>();
@@ -67,9 +68,13 @@ public class PlayerBall : MonoBehaviour
         ray.direction = -Vector3.up;
 
         RaycastHit HitOut;
-        Physics.Raycast(ray, out HitOut);
-        floorY = HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f; // 충돌 블록 상하, 좌우 대칭 가정.
-
+        if(Physics.Raycast(ray, out HitOut)) {
+            floorY = HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f; // 충돌 블록 상하, 좌우 대칭 가정.
+        }
+        else {
+            floorY = -10f;
+        }
+        
         float hSmooth = Input.GetAxisRaw("Horizontal");
         float vSmooth = Input.GetAxisRaw("Vertical");
         bool isJump = Input.GetKey(KeyCode.Space);
@@ -91,7 +96,7 @@ public class PlayerBall : MonoBehaviour
             j = isJump;
         }
         
-        if(!dashing) {
+        if(!dashing && !shooting) {
 
             if(isOneClick_h && (Time.time - PrevClickTime_h) > DoubleClickTerm) {
                 // Debug.Log("One Click!!");
@@ -107,6 +112,7 @@ public class PlayerBall : MonoBehaviour
 
             if (h!=0 || v!=0) {
                 dashDir = isDoubleClick(h, v);
+
                 if(!(dashDir.x == 0 && dashDir.y == 0 && dashDir.z == 0) && dash) {
                     GetComponent<Renderer>().material.SetColor("_Color", rigid_color);
                     rigid.AddForce(dashDir * DashForce, ForceMode.Impulse);
@@ -123,6 +129,10 @@ public class PlayerBall : MonoBehaviour
             prev_h = 0;
             dashing = false;
         }
+        else if (h!=0 || v!=0) {
+            shooting = false;
+            rigid.useGravity = true;
+        }
 
         if(isOneJump && (Time.time - PrevClickTime_j) > DoubleClickTerm) {
             isOneJump = false;
@@ -130,6 +140,7 @@ public class PlayerBall : MonoBehaviour
 
         if(j) {
             if(isDoubleJump() && jump) {
+                jump = false;
                 GetComponent<Renderer>().material.SetColor("_Color", rigid_color);
                 rigid.velocity = new Vector3(rigid.velocity.x, 0, rigid.velocity.z);
                 rigid.AddForce(new Vector3(0, 1f, 0) * JumpForce, ForceMode.Impulse);
@@ -240,7 +251,15 @@ public class PlayerBall : MonoBehaviour
         prev_v = 0;
         prev_h = 0;
         dashing = false;
-        ExecuteReBounding(collision);
+        shooting = false;
+        rigid.useGravity = true;
+
+        if(collision.gameObject.tag == "JumpBlock") {
+            ExecuteJumpBounding(collision);        
+        }
+        else {
+            ExecuteReBounding(collision);
+        }
         //Debug.Log(collision.gameObject.GetComponent<Collider>().bounds.size); //부딪히는 "바닥"은 모두 위쪽 축이 y이며 상하/좌우 대칭인 블록이라고 가정.
         //Debug.Log(collision.gameObject);
 
@@ -250,7 +269,7 @@ public class PlayerBall : MonoBehaviour
     }
     
     
-     void ExecuteReBounding(Collision collision) // 키씹 및 과속의 원인 2: 4번째 줄 안 쓰면 x, z 방향으로도 bouncing force가 적용된다.
+    void ExecuteReBounding(Collision collision) // 키씹 및 과속의 원인 2: 4번째 줄 안 쓰면 x, z 방향으로도 bouncing force가 적용된다.
     {
         // ContactPoint cp = collision.GetContact(0);
         // Vector3 dir = rigid.position - cp.point;
@@ -264,6 +283,21 @@ public class PlayerBall : MonoBehaviour
         // GetComponent<Rigidbody>().AddForce((dir).normalized * 1500f);
     }
 
+    void ExecuteJumpBounding(Collision collision) // ?                  2: 4  °            x, z        ε  bouncing force       ? .
+    {
+        // ContactPoint cp = collision.GetContact(0);
+        // Vector3 dir = rigid.position - cp.point;
+        // // Debug.Log(dir);
+        // dir.Set(dir.x * 0, dir.y, dir.z * 0);
+        // GetComponent<Rigidbody>().AddForce((dir).normalized * 2500f);
+
+        float ctoc_x = Mathf.Abs(collision.transform.position.x - transform.position.x);
+        float ctoc_z = Mathf.Abs(collision.transform.position.z - transform.position.z);
+        if(ctoc_x < (collision.gameObject.GetComponent<Collider>().bounds.size.x / 2f) + bound_error && ctoc_z < (collision.gameObject.GetComponent<Collider>().bounds.size.z / 2f) + bound_error) {
+            rigid.velocity = new Vector3(rigid.velocity.x, jump_velocity * 1.4f, rigid.velocity.z);
+        }
+    }
+
     void OnTriggerEnter(Collider other) {
         if(other.tag == "star") {
             other.gameObject.SetActive(false);
@@ -272,7 +306,6 @@ public class PlayerBall : MonoBehaviour
         if(other.tag == "kasi") {
             bounce_start = false;
             bounce_finish = false;
-            init_item_var();
             respawn();
         }
 
@@ -288,6 +321,33 @@ public class PlayerBall : MonoBehaviour
             jump = true;
             GetComponent<Renderer>().material.SetColor("_Color", new Color(0.314f, 0.071f, 0.024f));
             other.gameObject.SetActive(false);
+        }
+
+        if(other.tag == "CanonBlock") {
+            ExecuteShooting(other);
+        }
+    }
+
+    void ExecuteShooting(Collider other) {
+        shooting = true;
+        gameObject.transform.position = other.transform.position;
+
+        rigid.velocity = Vector3.zero;
+        rigid.useGravity = false;
+
+        float canon_rotation = other.transform.eulerAngles.y;
+        
+        if(canon_rotation == 0f) {
+            rigid.velocity = Vector3.right * 20;
+        }
+        else if(canon_rotation == 90f) {
+            rigid.velocity = Vector3.back * 20;
+        }
+        else if(canon_rotation == 180f) {
+            rigid.velocity = Vector3.left * 20;
+        }
+        else {
+            rigid.velocity = Vector3.forward * 20;
         }
     }
 
@@ -393,6 +453,8 @@ public class PlayerBall : MonoBehaviour
     }
 
     void respawn() {
+        GetComponent<Renderer>().material.SetColor("_Color", rigid_color);
+        init_item_var();
         transform.position = respawn_pos;
         rigid.velocity = new Vector3(0f, 0f, 0f);
         dynamicObjParent.ActivateAllChildren();
