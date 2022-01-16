@@ -29,12 +29,14 @@ public class PlayerBall : MonoBehaviour
 
     public float floorY = 0f;
     public Vector3 respawn_pos;
-    
+    private bool bounce_start = false, bounce_finish = false;
 
     Rigidbody rigid;
     Color rigid_color;
 
     private Vector3 dir_x, dir_z;
+    public float jump_velocity = 40f;
+    public float bound_error = 0.05f;
     
     void Awake() {
         rigid = GetComponent<Rigidbody>();
@@ -47,8 +49,9 @@ public class PlayerBall : MonoBehaviour
 
         camera_script = (camera) camera.GetComponent(typeof(camera));
         dynamicObjParent = (DynamicObjParent) dynamicObject.GetComponent(typeof(DynamicObjParent));
-        
-        respawn_pos = new Vector3(0f, 30f, 0f);
+        bounce_start = false;
+        bounce_finish = false;
+
         transform.position = respawn_pos;
     }
 
@@ -151,8 +154,8 @@ public class PlayerBall : MonoBehaviour
         Vector3 stop_x = velocity_x, stop_z = velocity_z;
         Vector3 max_x = velocity_x, max_z = velocity_z;
 
-        Debug.Log(Vector3.Magnitude(velocity_x));
-        Debug.Log(Vector3.Magnitude(velocity_z));
+        // Debug.Log(Vector3.Magnitude(velocity_x));
+        // Debug.Log(Vector3.Magnitude(velocity_z));
 
         if(Vector3.Magnitude(velocity_x) >= velocity_lowerbound && h * vecConst(velocity_x, dir_x) < 0f) {
             change_dir_x = true;
@@ -233,10 +236,11 @@ public class PlayerBall : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        
         prev_v = 0;
         prev_h = 0;
         dashing = false;
-        ExcecuteReBounding(collision);
+        ExecuteReBounding(collision);
         //Debug.Log(collision.gameObject.GetComponent<Collider>().bounds.size); //부딪히는 "바닥"은 모두 위쪽 축이 y이며 상하/좌우 대칭인 블록이라고 가정.
         //Debug.Log(collision.gameObject);
 
@@ -246,13 +250,18 @@ public class PlayerBall : MonoBehaviour
     }
     
     
-     void ExcecuteReBounding(Collision collision) // 키씹 및 과속의 원인 2: 4번째 줄 안 쓰면 x, z 방향으로도 bouncing force가 적용된다.
+     void ExecuteReBounding(Collision collision) // 키씹 및 과속의 원인 2: 4번째 줄 안 쓰면 x, z 방향으로도 bouncing force가 적용된다.
     {
-        ContactPoint cp = collision.GetContact(0);
-        Vector3 dir = rigid.position - cp.point;
+        // ContactPoint cp = collision.GetContact(0);
+        // Vector3 dir = rigid.position - cp.point;
         // Debug.Log(dir);
-        dir.Set(dir.x * 0, dir.y, dir.z * 0);
-        GetComponent<Rigidbody>().AddForce((dir).normalized * 1500f);
+        float ctoc_x = Mathf.Abs(collision.transform.position.x - transform.position.x);
+        float ctoc_z = Mathf.Abs(collision.transform.position.z - transform.position.z);
+        if(ctoc_x < (collision.gameObject.GetComponent<Collider>().bounds.size.x / 2f) + bound_error && ctoc_z < (collision.gameObject.GetComponent<Collider>().bounds.size.z / 2f) + bound_error) {
+            rigid.velocity = new Vector3(rigid.velocity.x, jump_velocity, rigid.velocity.z);
+        }
+        // dir.Set(dir.x * 0, dir.y, dir.z * 0);
+        // GetComponent<Rigidbody>().AddForce((dir).normalized * 1500f);
     }
 
     void OnTriggerEnter(Collider other) {
@@ -261,6 +270,8 @@ public class PlayerBall : MonoBehaviour
         }
 
         if(other.tag == "kasi") {
+            bounce_start = false;
+            bounce_finish = false;
             init_item_var();
             respawn();
         }
