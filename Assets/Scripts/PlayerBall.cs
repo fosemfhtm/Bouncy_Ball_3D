@@ -348,16 +348,16 @@ public class PlayerBall : MonoBehaviour
         float canon_rotation = other.transform.eulerAngles.y;
         
         if(canon_rotation == 0f) {
-            rigid.velocity = Vector3.right * 20;
+            rigid.velocity = Vector3.right * 30;
         }
         else if(canon_rotation == 90f) {
-            rigid.velocity = Vector3.back * 20;
+            rigid.velocity = Vector3.back * 30;
         }
         else if(canon_rotation == 180f) {
-            rigid.velocity = Vector3.left * 20;
+            rigid.velocity = Vector3.left * 30;
         }
         else {
-            rigid.velocity = Vector3.forward * 20;
+            rigid.velocity = Vector3.forward * 30;
         }
     }
 
