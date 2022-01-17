@@ -18,25 +18,25 @@ EditorBuildSettings:
     path: Assets/Scenes/Moon.unity
     guid: 387c67db64e000741ba7455a81b10f0d
   - enabled: 1
-    path: Assets/Scenes/Moon_Stage1.unity
+    path: Assets/Scenes/Moon_Stage2.unity
     guid: 70dfc775cfb0de04aa6b8abf1c508560
   - enabled: 1
-    path: Assets/Scenes/Moon_Stage2.unity
+    path: Assets/Scenes/Moon_Stage7.unity
     guid: 8d277243d5340ef4495406216f41fc00
   - enabled: 1
     path: Assets/Scenes/Moon_Stage3.unity
     guid: 3d41351a66f2f174d8bb2a68e186a777
   - enabled: 1
-    path: Assets/Scenes/Stage1.unity
+    path: Assets/Scenes/Earth_map/Earth_1.unity
     guid: 2976942744978e34a80e6f417bc5676c
   - enabled: 1
-    path: Assets/Scenes/Stage2.unity
+    path: Assets/Scenes/Earth_map/Earth_3.unity
     guid: 9d14b67e8b93a2f4d92c1e2cbd7ce288
   - enabled: 1
-    path: Assets/Scenes/Stage3.unity
+    path: Assets/Scenes/Earth_map/Earth_7.unity
     guid: 6acccef5a86036d4aaf642751a6c7208
   - enabled: 1
-    path: Assets/Scenes/Stage4.unity
+    path: Assets/Scenes/Earth_map/Earth_9.unity
     guid: 5d3e6e3a6e4501946b2cacc8ba6651bf
   - enabled: 1
     path: Assets/Scenes/Stages.unity

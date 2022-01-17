@@ -10,7 +10,6 @@ public class moveBlock : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        dir = 1;
         speed = 8;
         prevTime = Time.time;
     }

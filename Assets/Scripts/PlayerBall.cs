@@ -38,6 +38,7 @@ public class PlayerBall : MonoBehaviour
     private float jump_velocity = 37f;
     private float bound_error = 0.5f;
     private float pushing_factor = 1.8f;
+    public float  ball_lowbound;
     
     void Awake() {
         rigid = GetComponent<Rigidbody>();
@@ -57,7 +58,7 @@ public class PlayerBall : MonoBehaviour
     }
 
     void Update() {
-        if(transform.position.y < -10f) {
+        if(transform.position.y < ball_lowbound) {
             respawn();
         }
     }
@@ -72,7 +73,7 @@ public class PlayerBall : MonoBehaviour
             floorY = HitOut.transform.gameObject.transform.position.y + HitOut.transform.gameObject.GetComponent<Collider>().bounds.size.y / 2f; // 충돌 블록 상하, 좌우 대칭 가정.
         }
         else {
-            floorY = -10f;
+            floorY = -100f;
         }
         
         float hSmooth = Input.GetAxisRaw("Horizontal");
@@ -273,7 +274,11 @@ public class PlayerBall : MonoBehaviour
         //Debug.Log(collision.gameObject);
 
         if(collision.gameObject.tag == "fragile_block") {
-            collision.gameObject.SetActive(false);
+            float ctoc_x = Mathf.Abs(collision.transform.position.x - transform.position.x);
+            float ctoc_z = Mathf.Abs(collision.transform.position.z - transform.position.z);
+            if(ctoc_x < (collision.gameObject.GetComponent<Collider>().bounds.size.x / 2f) + bound_error && ctoc_z < (collision.gameObject.GetComponent<Collider>().bounds.size.z / 2f)) {
+                collision.gameObject.SetActive(false);
+            }
         }
     }
     
