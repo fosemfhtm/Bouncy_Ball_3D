@@ -7819,6 +7819,10 @@ MonoBehaviour:
   JumpForce: 40
   floorY: 0
   respawn_pos: {x: 0, y: 5, z: 0}
+  ball_lowbound: 0
+  SceneToLoad: Earth_8
+  SceneToEscape: Earth
+  star_num: 15
 --- !u!135 &1501339738
 SphereCollider:
   m_ObjectHideFlags: 0

@@ -1586,6 +1586,9 @@ MonoBehaviour:
   floorY: 0
   respawn_pos: {x: 0, y: 10, z: 0}
   ball_lowbound: -10
+  SceneToLoad: Moon_4
+  SceneToEscape: Moon
+  star_num: 1
 --- !u!135 &127181372
 SphereCollider:
   m_ObjectHideFlags: 0

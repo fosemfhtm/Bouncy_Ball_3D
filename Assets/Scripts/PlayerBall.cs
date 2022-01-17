@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerBall : MonoBehaviour
 {
@@ -38,7 +39,12 @@ public class PlayerBall : MonoBehaviour
     private float jump_velocity = 37f;
     private float bound_error = 0.5f;
     private float pushing_factor = 1.8f;
+    
     public float  ball_lowbound;
+    public string SceneToLoad;
+    public string SceneToEscape;
+    public int star_num;
+    private int star_get;
     
     void Awake() {
         rigid = GetComponent<Rigidbody>();
@@ -55,9 +61,14 @@ public class PlayerBall : MonoBehaviour
         bounce_finish = false;
 
         transform.position = respawn_pos;
+        star_get = 0;
     }
 
     void Update() {
+        if(Input.GetKey(KeyCode.Escape)) {
+            SceneManager.LoadScene(SceneToEscape);
+        }
+
         if(transform.position.y < ball_lowbound) {
             respawn();
         }
@@ -315,6 +326,10 @@ public class PlayerBall : MonoBehaviour
     void OnTriggerEnter(Collider other) {
         if(other.tag == "star") {
             other.gameObject.SetActive(false);
+            star_get++;
+            if(star_get == star_num) {
+                SceneManager.LoadScene(SceneToLoad);
+            }
         }
 
         if(other.tag == "kasi") {
@@ -473,6 +488,7 @@ public class PlayerBall : MonoBehaviour
     }
 
     void respawn() {
+        star_get = 0;
         GetComponent<Renderer>().material.SetColor("_Color", rigid_color);
         init_item_var();
         transform.position = respawn_pos;
