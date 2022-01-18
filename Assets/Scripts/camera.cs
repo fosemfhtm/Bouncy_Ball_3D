@@ -18,10 +18,13 @@ public class camera : MonoBehaviour
 
     private Vector3 Camera_Height;
     private Vector3 Third_View_Side;
-    
+     
     private float dx = 0;
     private float dy = 0;
     private float damp_velocity = 15f, smoothTime=0.5f, newY;
+
+    public Vector3 pure_CamView;
+    public bool scroll_enable = true;
 
 
     void Start()
@@ -30,12 +33,13 @@ public class camera : MonoBehaviour
         Third_View_Side = new Vector3(-1f, 0f, 0f);
         player_script = (PlayerBall) player.GetComponent(typeof(PlayerBall));
         controlY_script = (cameraY) controlY.GetComponent(typeof(cameraY));
+        scroll_enable = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Vector3 pure_CamView = transform.position + transform.rotation * (new Vector3(0.0f, 0.0f, distance));
+        pure_CamView = transform.position + transform.rotation * (new Vector3(0.0f, 0.0f, 10f));
         if(controlY_script.ball_following) newY = Mathf.SmoothDamp(newY, controlY.transform.position.y, ref damp_velocity, smoothTime/2f);
         else newY = Mathf.SmoothDamp(newY, controlY.transform.position.y, ref damp_velocity, smoothTime);
 
@@ -60,9 +64,11 @@ public class camera : MonoBehaviour
             transform.position = Camera_View + transform.rotation * reverseDistance;
         }
         else {
-            distance -= Input.GetAxis("Mouse ScrollWheel") * wheelSpeed;
-            if (distance < scroll_lower_bound) distance = scroll_lower_bound;
-            if (distance > scroll_higher_bound) distance = scroll_higher_bound ;
+            if(scroll_enable) {
+                distance -= Input.GetAxis("Mouse ScrollWheel") * wheelSpeed;
+                if (distance < scroll_lower_bound) distance = scroll_lower_bound;
+                if (distance > scroll_higher_bound) distance = scroll_higher_bound;
+            }
 
             Camera_View += transform.rotation * Third_View_Side;
             Camera_View.y = newY;

@@ -11,6 +11,8 @@ public class PlayerBall : MonoBehaviour
     public GameObject dynamicObject;
     public DynamicObjParent dynamicObjParent;
 
+    public GameObject FloatingMenu;
+
     public float factor = 0.7f;
     public float max_velocity = 17f;
     public float friction_force = 0.7f;
@@ -53,6 +55,8 @@ public class PlayerBall : MonoBehaviour
     public AudioClip audioRespawn;
 
     AudioSource audioSource;
+
+    private bool floating_menu_show = false;
     
     void Awake() {
         rigid = GetComponent<Rigidbody>();
@@ -72,12 +76,25 @@ public class PlayerBall : MonoBehaviour
         star_get = 0;
 
         this.audioSource = GetComponent<AudioSource>();
+        floating_menu_show = false;
     }
 
     void Update() {
-        if(Input.GetKey(KeyCode.Escape)) {
-            SceneManager.LoadScene(SceneToEscape);
+        if(Input.GetKeyDown(KeyCode.Escape)) {
+            floating_menu_show = !floating_menu_show;
         }
+
+        if(floating_menu_show) {
+            FloatingMenu.SetActive(true);
+            camera_script.scroll_enable = false;
+        }
+        else {
+            FloatingMenu.SetActive(false);
+            camera_script.scroll_enable = true;
+        }
+
+        FloatingMenu.transform.position = camera_script.pure_CamView;
+        FloatingMenu.transform.rotation = camera.transform.rotation;
 
         if(transform.position.y < ball_lowbound) {
             respawn();
@@ -533,7 +550,6 @@ public class PlayerBall : MonoBehaviour
                 break;
         }
         audioSource.PlayOneShot(audioSource.clip);
-        Debug.Log(audioRebound);
     }
 
 }
