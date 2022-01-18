@@ -5391,9 +5391,9 @@ MonoBehaviour:
   floorY: 0
   respawn_pos: {x: 0, y: 5, z: 0}
   ball_lowbound: -10
-  SceneToLoad: Earth_7
-  SceneToEscape: Earth
   star_num: 1
+  next_scene: Earth_7
+  SceneToLoad: Clear_Earth
   audioRebound: {fileID: 8300000, guid: e7bad3167e5746e4eab23a18e0d0a5f6, type: 3}
   audioStar: {fileID: 8300000, guid: 79180f511d89441b9aa23ccae1992fe0, type: 3}
   audioItem: {fileID: 8300000, guid: 2c5292ba5cf254919a6b9e2b18e04f49, type: 3}

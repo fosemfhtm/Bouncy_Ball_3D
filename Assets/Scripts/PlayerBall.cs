@@ -45,6 +45,7 @@ public class PlayerBall : MonoBehaviour
     public int star_num;
     private int star_get;
     public string next_scene;
+    public string SceneToLoad;
 
     public AudioClip audioRebound;
     public AudioClip audioStar;

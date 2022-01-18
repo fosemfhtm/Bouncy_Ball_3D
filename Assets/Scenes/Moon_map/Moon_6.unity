@@ -7739,9 +7739,9 @@ MonoBehaviour:
   floorY: 0
   respawn_pos: {x: 0, y: 56, z: 0}
   ball_lowbound: 0
-  SceneToLoad: Moon_7
-  SceneToEscape: Moon
   star_num: 11
+  next_scene: Moon_7
+  SceneToLoad: Clear_Moon
   audioRebound: {fileID: 8300000, guid: e7bad3167e5746e4eab23a18e0d0a5f6, type: 3}
   audioStar: {fileID: 8300000, guid: 79180f511d89441b9aa23ccae1992fe0, type: 3}
   audioItem: {fileID: 8300000, guid: 2c5292ba5cf254919a6b9e2b18e04f49, type: 3}
