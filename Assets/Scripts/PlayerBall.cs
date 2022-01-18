@@ -45,6 +45,14 @@ public class PlayerBall : MonoBehaviour
     public string SceneToEscape;
     public int star_num;
     private int star_get;
+
+    public AudioClip audioRebound;
+    public AudioClip audioStar;
+    public AudioClip audioItem;
+    public AudioClip audioTap;
+    public AudioClip audioRespawn;
+
+    AudioSource audioSource;
     
     void Awake() {
         rigid = GetComponent<Rigidbody>();
@@ -62,6 +70,8 @@ public class PlayerBall : MonoBehaviour
 
         transform.position = respawn_pos;
         star_get = 0;
+
+        this.audioSource = GetComponent<AudioSource>();
     }
 
     void Update() {
@@ -133,6 +143,8 @@ public class PlayerBall : MonoBehaviour
 
                     dashing = true;
                     shooting = false;
+
+                    PlaySound("Item");
                 }
 
                 if (shooting) {
@@ -165,6 +177,8 @@ public class PlayerBall : MonoBehaviour
                 
                 rigid.useGravity = true;
                 shooting = false;
+
+                PlaySound("Item");
             }
         }
 
@@ -306,6 +320,7 @@ public class PlayerBall : MonoBehaviour
         }
         // dir.Set(dir.x * 0, dir.y, dir.z * 0);
         // GetComponent<Rigidbody>().AddForce((dir).normalized * 1500f);
+        PlaySound("rebound");
     }
 
     void ExecuteJumpBounding(Collision collision) // ?                  2: 4  б╞            x, z        ех  bouncing force       ? .
@@ -321,11 +336,13 @@ public class PlayerBall : MonoBehaviour
         if(ctoc_x < (collision.gameObject.GetComponent<Collider>().bounds.size.x / 2f) + bound_error && ctoc_z < (collision.gameObject.GetComponent<Collider>().bounds.size.z / 2f) + bound_error) {
             rigid.velocity = new Vector3(rigid.velocity.x, jump_velocity * 1.4f, rigid.velocity.z);
         }
+        PlaySound("Item");
     }
 
     void OnTriggerEnter(Collider other) {
         if(other.tag == "star") {
             other.gameObject.SetActive(false);
+            PlaySound("star");
             star_get++;
             if(star_get == star_num) {
                 SceneManager.LoadScene(SceneToLoad);
@@ -379,6 +396,7 @@ public class PlayerBall : MonoBehaviour
         else {
             rigid.velocity = Vector3.forward * 30;
         }
+        PlaySound("Item");
     }
 
     Vector3 proj(Vector3 vec, Vector3 dir) { //dir_x is a unit vector
@@ -494,6 +512,28 @@ public class PlayerBall : MonoBehaviour
         transform.position = respawn_pos;
         rigid.velocity = new Vector3(0f, 0f, 0f);
         dynamicObjParent.ActivateAllChildren();
+    }
+
+    void PlaySound(string action) {
+        switch (action) {
+            case "rebound":
+                audioSource.clip = audioRebound;
+                break;
+            case "star":
+                audioSource.clip = audioStar;
+                break;
+            case "Item":
+                audioSource.clip = audioItem;
+                break;
+            case "tab":
+                audioSource.clip = audioTap;
+                break;
+            case "respawn":
+                audioSource.clip = audioRespawn;
+                break;
+        }
+        audioSource.PlayOneShot(audioSource.clip);
+        Debug.Log(audioRebound);
     }
 
 }

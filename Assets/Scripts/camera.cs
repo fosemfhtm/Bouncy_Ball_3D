@@ -11,9 +11,9 @@ public class camera : MonoBehaviour
     
     public float rotateSpeed = 2f;
     public float wheelSpeed = 10f;
-    public float distance = 5f;
-    public float scroll_higher_bound = 30f;
-    public float scroll_lower_bound = 1f;
+    private float distance = 30f;
+    private float scroll_higher_bound = 100f;
+    private float scroll_lower_bound = 10f;
     public bool Third_View = true;
 
     private Vector3 Camera_Height;
