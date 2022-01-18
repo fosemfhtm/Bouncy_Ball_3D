@@ -32,7 +32,6 @@ public class PlayerBall : MonoBehaviour
 
     public float floorY = 0f;
     public Vector3 respawn_pos;
-    private bool bounce_start = false, bounce_finish = false;
 
     Rigidbody rigid;
     Color rigid_color;
@@ -43,10 +42,9 @@ public class PlayerBall : MonoBehaviour
     private float pushing_factor = 1.8f;
     
     public float  ball_lowbound;
-    public string SceneToLoad;
-    public string SceneToEscape;
     public int star_num;
     private int star_get;
+    public string next_scene;
 
     public AudioClip audioRebound;
     public AudioClip audioStar;
@@ -57,6 +55,8 @@ public class PlayerBall : MonoBehaviour
     AudioSource audioSource;
 
     private bool floating_menu_show = false;
+
+    
     
     void Awake() {
         rigid = GetComponent<Rigidbody>();
@@ -69,8 +69,6 @@ public class PlayerBall : MonoBehaviour
 
         camera_script = (camera) camera.GetComponent(typeof(camera));
         dynamicObjParent = (DynamicObjParent) dynamicObject.GetComponent(typeof(DynamicObjParent));
-        bounce_start = false;
-        bounce_finish = false;
 
         transform.position = respawn_pos;
         star_get = 0;
@@ -362,13 +360,12 @@ public class PlayerBall : MonoBehaviour
             PlaySound("star");
             star_get++;
             if(star_get == star_num) {
+                load_next.NextLevel = next_scene;
                 SceneManager.LoadScene(SceneToLoad);
             }
         }
 
         if(other.tag == "kasi") {
-            bounce_start = false;
-            bounce_finish = false;
             respawn();
         }
 
