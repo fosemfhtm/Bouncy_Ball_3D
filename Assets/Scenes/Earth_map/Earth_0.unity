@@ -97,8 +97,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: c92143f0bdd56f749a0de251d1e15ee1, type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: f2c72310f32edc64b82a01338fbcbc45, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -29609,10 +29609,9 @@ MonoBehaviour:
   floorY: 0
   respawn_pos: {x: -14, y: 5, z: -14}
   ball_lowbound: 0
-  SceneToLoad: Clear_Earth
-  SceneToEscape: Earth
   star_num: 1
   next_scene: Earth_1
+  SceneToLoad: Clear_Earth
   audioRebound: {fileID: 8300000, guid: e7bad3167e5746e4eab23a18e0d0a5f6, type: 3}
   audioStar: {fileID: 8300000, guid: 79180f511d89441b9aa23ccae1992fe0, type: 3}
   audioItem: {fileID: 8300000, guid: 2c5292ba5cf254919a6b9e2b18e04f49, type: 3}

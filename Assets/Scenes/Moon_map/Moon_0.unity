@@ -97,8 +97,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 2ad87c3c8b5c026459b8ccbd85eddcda, type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: f75494176f694b144a2c8cfcadd27ab1, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -18264,7 +18264,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 326cca1b0f0dee5418a5f29c107f7269, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SceneToLoad: Earth
+  SceneToLoad: Moon
 --- !u!114 &2128952715
 MonoBehaviour:
   m_ObjectHideFlags: 0
