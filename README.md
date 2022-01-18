@@ -14,10 +14,6 @@
 
 ## Stage
 
-## Earth
-
-## Moon
-
 ## TODO
 
 ## Comments
