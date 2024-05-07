@@ -2,7 +2,7 @@
 #### 학창 시절 추억의 게임 바운스볼, 유니티를 통해 3D로 재탄생
 
 # Playing Video
-[![Video Label](http://img.youtube.com/vi/59USvjy2toI/0.jpg)]
+[![Video Label](http://img.youtube.com/vi/DfWr55jo9bA/0.jpg)]
 
 ## Period
 몰입캠프 3주차 (1.12 ~ 1.18)
