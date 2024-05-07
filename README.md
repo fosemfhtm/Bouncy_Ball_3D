@@ -1,6 +1,9 @@
 # Bouncy Ball 3D
 #### 학창 시절 추억의 게임 바운스볼, 유니티를 통해 3D로 재탄생
 
+# Playing Video
+https://drive.google.com/file/d/1dAyL0CvDPPG9e1T2mkDPtXT3POFcUl7f/view?usp=sharing
+
 ## Period
 몰입캠프 3주차 (1.12 ~ 1.18)
 
